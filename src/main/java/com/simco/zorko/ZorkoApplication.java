@@ -10,20 +10,24 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ZorkoApplication
 implements CommandLineRunner {
 
-	private static Logger log = LoggerFactory.getLogger(ZorkoApplication.class);
-	
-	public static void main(String[] args) {
-		log.info("Starting the application");
-		SpringApplication.run(ZorkoApplication.class, args);
-		log.info("Application finished");
-	}
+    private static Logger log = LoggerFactory.getLogger(ZorkoApplication.class);
 
-	@Override
-	public void run(String... args) throws Exception {
-		log.info("Executing: command line runner");
-		for (int i = 0; i < args.length; ++i) {
-			log.info("args[{}]: {}", i, args[i]);
-		}
-	}
+    public static void main(String[] args) {
+        log.info("Starting the application");
+        SpringApplication.run(ZorkoApplication.class, args);
+        log.info("Application finished");
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        log.info("Executing: command line runner");
+        for (int i = 0; i < args.length; ++i) {
+            log.info("args[{}]: {}", i, args[i]);
+        }
+
+        ZorkoGame game = new ZorkoGame();
+        game.begin();
+        System.exit(0);
+    }
 
 }
