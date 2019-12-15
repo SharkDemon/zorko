@@ -47,4 +47,9 @@ public class Condition {
         this.owner = owner;
     }
 
+    public boolean evaluate() {
+        // TODO: implement based on condition type
+        return false;
+    }
+
 }

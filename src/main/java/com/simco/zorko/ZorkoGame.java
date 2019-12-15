@@ -15,6 +15,7 @@ import com.simco.zorko.model.Container;
 import com.simco.zorko.model.Creature;
 import com.simco.zorko.model.Item;
 import com.simco.zorko.model.Room;
+import com.simco.zorko.model.Trigger;
 
 public class ZorkoGame implements ZorkoGameEventHandler {
 
@@ -92,6 +93,12 @@ public class ZorkoGame implements ZorkoGameEventHandler {
             try {
                 System.out.print(GAME_USER_PROMPT);
                 command = input.nextLine();
+
+                // TODO: (1) check if command should be overwritten by triggers for the
+                // room (does this include items, containers that are in the room?)
+                boolean skipUserCommand = checkTriggers();
+
+                // (2) execute the command
                 gameRunning = handleCommand(command);
             }
             catch (Exception e) {
@@ -101,15 +108,28 @@ public class ZorkoGame implements ZorkoGameEventHandler {
         input.close();
     }
 
+    private boolean checkTriggers() {
+        boolean skipUserCommand = false;
+        for (Trigger t : getCurrentRoom().getTriggers()) {
+            if (t.evaluate()) {
+                // print each of the trigger prints
+                t.getPrints().stream().forEach(print -> System.out.println(print));
+                // TODO: perform each of the trigger actions
+                skipUserCommand = true;
+                // remove the trigger if this was a one-time thing
+                if (t.isSingle()) {
+                    getCurrentRoom().getTriggers().remove(t);
+                }
+            }
+        }
+        return skipUserCommand;
+    }
+
     // handles user-input commands
     @Override
     public boolean handleCommand(String userCommand) {
         String command = userCommand.trim().toLowerCase();
 
-        // TODO: (1) check if command should be overwritten by triggers for the
-        // room (does this include items, containers that are in the room?)
-
-        // (2) execute the command
         if (command.equals(CMD_EXIT)) {
             return false;
         }
@@ -123,6 +143,10 @@ public class ZorkoGame implements ZorkoGameEventHandler {
         // (3) check if the effects of the command activate a trigger
 
         return true;
+    }
+
+    private Room getCurrentRoom() {
+        return this.rooms.get(this.currentRoomName);
     }
 
     private void printCurrentRoomDescription() {

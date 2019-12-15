@@ -56,4 +56,19 @@ public class Trigger {
         this.actions = actions;
     }
 
+    public boolean isSingle() {
+        return TYPE_SINGLE.equals(this.type);
+    }
+
+    public boolean evaluate() {
+        for (Condition c : this.conditions) {
+            if (!c.evaluate()) {
+                // this condition failed, therefore trigger eval to false
+                return false;
+            }
+        }
+        // all the conditions have been met, therefore trigger eval to true
+        return true;
+    }
+
 }
