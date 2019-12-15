@@ -63,11 +63,11 @@ public class Trigger {
     public boolean evaluate() {
         for (Condition c : this.conditions) {
             if (!c.evaluate()) {
-                // this condition failed, therefore trigger eval to false
+                // this condition not met, therefore trigger evaluates to false
                 return false;
             }
         }
-        // all the conditions have been met, therefore trigger eval to true
+        // all the conditions have been met, therefore trigger evaluates to true
         return true;
     }
 

@@ -4,7 +4,11 @@ import static com.simco.zorko.model.Commands.CMD_EXIT;
 import static com.simco.zorko.model.Commands.CMD_INVENTORY;
 import static com.simco.zorko.model.Commands.CMD_LOOK;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -30,6 +34,13 @@ public class ZorkoGame implements ZorkoGameEventHandler {
     private Map<String, Creature> creatures = new HashMap<String, Creature>(0);
     private String currentRoomName = null;
 
+    private Map<String, Item> inventoryItems = new HashMap<String, Item>(0);
+
+    // some lists of related commands, for easier command handling
+    List<String> directionCommands = Collections.unmodifiableList(new ArrayList<String>(
+            Arrays.asList("n", "e", "w", "s", "u", "d", "north", "east", "west", "south", "up", "down")
+            ));
+
     public ZorkoGame() {
         super();
     }
@@ -45,9 +56,6 @@ public class ZorkoGame implements ZorkoGameEventHandler {
     public void setRooms(Map<String, Room> rooms) {
         this.rooms = rooms;
     }
-    public boolean hasRoom(Room room) {
-        return this.rooms.containsKey(room.getName());
-    }
     public Room getRoom(String roomName) {
         return this.rooms.get(roomName);
     }
@@ -55,9 +63,6 @@ public class ZorkoGame implements ZorkoGameEventHandler {
     // basic Item functionality
     public void setItems(Map<String, Item> items) {
         this.items = items;
-    }
-    public boolean hasItem(Item item) {
-        return this.items.containsKey(item.getName());
     }
     public Item getItem(String itemName) {
         return this.items.get(itemName);
@@ -67,10 +72,16 @@ public class ZorkoGame implements ZorkoGameEventHandler {
     public void setContainers(Map<String, Container> containers) {
         this.containers = containers;
     }
+    public Container getContainer(String containerName) {
+        return this.containers.get(containerName);
+    }
 
     // basic Creature functionality
     public void setCreatures(Map<String, Creature> creatures) {
         this.creatures = creatures;
+    }
+    public Creature getCreature(String creatureName) {
+        return this.creatures.get(creatureName);
     }
 
     public String getCurrentRoomName() {
@@ -78,6 +89,11 @@ public class ZorkoGame implements ZorkoGameEventHandler {
     }
     public void setCurrentRoomName(String currentRoomName) {
         this.currentRoomName = currentRoomName;
+    }
+
+    // basic Inventory functionality (Items)
+    public Item getInventoryItem(String itemName) {
+        return this.inventoryItems.get(itemName);
     }
 
     // starts the game loop
@@ -96,10 +112,13 @@ public class ZorkoGame implements ZorkoGameEventHandler {
 
                 // TODO: (1) check if command should be overwritten by triggers for the
                 // room (does this include items, containers that are in the room?)
-                boolean skipUserCommand = checkTriggers();
+                boolean skipUserCommand = checkAllTriggers();
+                log.info("SkipUserCommand={}", skipUserCommand);
 
                 // (2) execute the command
-                gameRunning = handleCommand(command);
+                if (!skipUserCommand) {
+                    gameRunning = handleCommand(command);
+                }
             }
             catch (Exception e) {
                 log.info("Error handling command: {}", command);
@@ -108,12 +127,15 @@ public class ZorkoGame implements ZorkoGameEventHandler {
         input.close();
     }
 
-    private boolean checkTriggers() {
+    private boolean checkAllTriggers() {
+
         boolean skipUserCommand = false;
+
+        // check current room triggers
         for (Trigger t : getCurrentRoom().getTriggers()) {
             if (t.evaluate()) {
                 // print each of the trigger prints
-                t.getPrints().stream().forEach(print -> System.out.println(print));
+                t.getPrints().stream().forEach(System.out::println);
                 // TODO: perform each of the trigger actions
                 skipUserCommand = true;
                 // remove the trigger if this was a one-time thing
@@ -138,6 +160,10 @@ public class ZorkoGame implements ZorkoGameEventHandler {
         }
         else if (command.equals(CMD_LOOK)) {
             printCurrentRoomDescription();
+        }
+        else if (directionCommands.contains(userCommand)) {
+            // handle movement
+            System.out.println("TODO: handle movement here");
         }
 
         // (3) check if the effects of the command activate a trigger

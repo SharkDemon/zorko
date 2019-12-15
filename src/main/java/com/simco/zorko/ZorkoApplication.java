@@ -7,10 +7,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.simco.zorko.builder.BorderBuilder;
-import com.simco.zorko.builder.ConditionBuilder;
+import com.simco.zorko.builder.ConditionHasBuilder;
+import com.simco.zorko.builder.ConditionStatusBuilder;
 import com.simco.zorko.builder.GameBuilder;
+import com.simco.zorko.builder.ItemBuilder;
 import com.simco.zorko.builder.RoomBuilder;
 import com.simco.zorko.builder.TriggerBuilder;
+import com.simco.zorko.builder.TurnOnBuilder;
 import com.simco.zorko.model.Trigger;
 
 @SpringBootApplication
@@ -42,9 +45,9 @@ implements CommandLineRunner {
                         .addTrigger( new TriggerBuilder()
                                 .setType(Trigger.TYPE_PERMANENT)
                                 .setCommand("north")
-                                .addCondition( new ConditionBuilder()
+                                .addCondition( new ConditionHasBuilder()
                                         .setHas(Boolean.FALSE)
-                                        .setObject("torch")
+                                        .setObjectName("torch")
                                         .setOwner("inventory")
                                         .build() )
                                 .addPrint("*stumble* need some light...")
@@ -60,8 +63,8 @@ implements CommandLineRunner {
                         .addTrigger( new TriggerBuilder()
                                 .setType(Trigger.TYPE_PERMANENT)
                                 .setCommand("north")
-                                .addCondition( new ConditionBuilder()
-                                        .setObject("lock")
+                                .addCondition( new ConditionStatusBuilder()
+                                        .setObjectName("lock")
                                         .setStatus("locked")
                                         .build() )
                                 .addPrint("lock needs a key...not to mention you don't want to get too close to that side of the room...there's something in that corner...")
@@ -75,9 +78,32 @@ implements CommandLineRunner {
                         .setType("exit")
                         .addBorder( new BorderBuilder().setDirection("south").setName("MainCavern").build() )
                         .build())
+                .addItem( new ItemBuilder()
+                        .setName("torch")
+                        .setWriting("next to a small button it reads \"push for big flame\"")
+                        .setStatus("lit")
+                        .setTurnOn( new TurnOnBuilder()
+                                .setPrint("the torch has erupted into a menacing inferno")
+                                .setAction("Update torch to inferno")
+                                .build())
+                        .build())
+                .addItem( new ItemBuilder()
+                        .setName("explosive")
+                        .setWriting("turn on for boom :-).  Warning!  Keep away from gnomes!")
+                        .setStatus("idle")
+                        .setTurnOn( new TurnOnBuilder()
+                                .setPrint("you hear ticking...")
+                                .setAction("Update explosive to ticking")
+                                .build())
+                        .build())
+                .addItem( new ItemBuilder()
+                        .setName("key")
+                        .setWriting("Exit")
+                        .build())
                 .build();
 
         game.begin();
+        log.info("Game stopped, exiting");
         System.exit(0);
     }
 

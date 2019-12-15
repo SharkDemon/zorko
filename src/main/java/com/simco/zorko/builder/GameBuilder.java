@@ -60,6 +60,30 @@ public class GameBuilder {
         game.setContainers( this.containers );
         game.setCreatures( this.creatures );
         game.setCurrentRoomName(STARTING_ROOM_NAME);
+
+        // set the game property on all of the conditions in all of the triggers
+        this.rooms.entrySet().stream().forEach(e -> {
+            e.getValue().getTriggers().stream().forEach(t -> {
+                t.getConditions().stream().forEach(c -> {
+                    c.setGame(game);
+                });
+            });
+        });
+        this.containers.entrySet().stream().forEach(e -> {
+            e.getValue().getTriggers().stream().forEach(t -> {
+                t.getConditions().stream().forEach(c -> {
+                    c.setGame(game);
+                });
+            });
+        });
+        this.creatures.entrySet().stream().forEach(e -> {
+            e.getValue().getTriggers().stream().forEach(t -> {
+                t.getConditions().stream().forEach(c -> {
+                    c.setGame(game);
+                });
+            });
+        });
+
         return game;
     }
 
