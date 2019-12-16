@@ -10,6 +10,7 @@ import com.simco.zorko.builder.BorderBuilder;
 import com.simco.zorko.builder.ConditionHasBuilder;
 import com.simco.zorko.builder.ConditionStatusBuilder;
 import com.simco.zorko.builder.ContainerBuilder;
+import com.simco.zorko.builder.CreatureBuilder;
 import com.simco.zorko.builder.GameBuilder;
 import com.simco.zorko.builder.ItemBuilder;
 import com.simco.zorko.builder.RoomBuilder;
@@ -117,6 +118,17 @@ implements CommandLineRunner {
                                         .build() )
                                 .addPrint("The lock drops off and the door opens")
                                 .addAction("Update lock to unlocked")
+                                .build())
+                        .build())
+                .addCreature( new CreatureBuilder()
+                        .setName("gnome")
+                        .setVulnerability("explosive")
+                        .addTrigger( new TriggerBuilder()
+                                .addCondition( new ConditionStatusBuilder()
+                                        .setObjectName("torch")
+                                        .setStatus("inferno")
+                                        .build() )
+                                .addPrint("You see a gnome in the dark corner...watching you with its super pointy hat...")
                                 .build())
                         .build())
                 .build();

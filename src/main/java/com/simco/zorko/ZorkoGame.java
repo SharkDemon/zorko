@@ -3,6 +3,7 @@ package com.simco.zorko;
 import static com.simco.zorko.model.Commands.CMD_EXIT;
 import static com.simco.zorko.model.Commands.CMD_INVENTORY;
 import static com.simco.zorko.model.Commands.CMD_LOOK;
+import static com.simco.zorko.model.Commands.CMD_QUIT;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -169,11 +171,12 @@ public class ZorkoGame implements ZorkoGameEventHandler {
     public boolean handleCommand(String userCommand) {
         String command = userCommand.trim().toLowerCase();
 
-        if (command.equals(CMD_EXIT)) {
+        if (command.equals(CMD_EXIT) || command.equals(CMD_QUIT)) {
             return false;
         }
         else if (command.equals(CMD_INVENTORY)) {
-            System.out.println("TODO: print inventory string here");
+            System.out.println(String.format("Inventory: %s",
+                    0 == inventoryItems.size() ? "nothing" : inventoryItems.keySet().stream().collect(Collectors.joining(", "))));
         }
         else if (command.equals(CMD_LOOK)) {
             printCurrentRoomDescription();

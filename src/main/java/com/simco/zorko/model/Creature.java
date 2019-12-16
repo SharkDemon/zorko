@@ -5,6 +5,8 @@ import java.util.List;
 public class Creature implements Triggerable {
 
     private String name;
+    // vulnerability is the name of an object that can defeat the creature
+    private String vulnerability;
     private List<Trigger> triggers;
 
     public Creature() {
@@ -16,6 +18,13 @@ public class Creature implements Triggerable {
     }
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getVulnerability() {
+        return vulnerability;
+    }
+    public void setVulnerability(String vulnerability) {
+        this.vulnerability = vulnerability;
     }
 
     @Override
