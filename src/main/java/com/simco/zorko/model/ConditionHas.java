@@ -1,6 +1,11 @@
 package com.simco.zorko.model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ConditionHas extends Condition {
+
+    private static Logger log = LoggerFactory.getLogger(ConditionHas.class);
 
     private Boolean has;
     // TODO: owner can be a container (could it be an item?), or "inventory"
@@ -26,6 +31,8 @@ public class ConditionHas extends Condition {
 
     @Override
     public boolean evaluate() {
+
+        log.info("evaluating has condition: {} has {}", getOwner(), getObjectName());
 
         // game entities that might "have" something include the player
         // inventory (Items), Rooms, and Containers.  try checking the player

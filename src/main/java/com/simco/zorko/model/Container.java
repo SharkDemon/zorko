@@ -6,6 +6,7 @@ public class Container implements Triggerable {
 
     private String name;
     private String status;
+    private String accept;
     private List<String> items;
     private List<Trigger> triggers;
 
@@ -25,6 +26,13 @@ public class Container implements Triggerable {
     }
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getAccept() {
+        return accept;
+    }
+    public void setAccept(String accept) {
+        this.accept = accept;
     }
 
     public List<String> getItems() {

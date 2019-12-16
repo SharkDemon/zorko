@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.simco.zorko.builder.BorderBuilder;
 import com.simco.zorko.builder.ConditionHasBuilder;
 import com.simco.zorko.builder.ConditionStatusBuilder;
+import com.simco.zorko.builder.ContainerBuilder;
 import com.simco.zorko.builder.GameBuilder;
 import com.simco.zorko.builder.ItemBuilder;
 import com.simco.zorko.builder.RoomBuilder;
@@ -99,6 +100,24 @@ implements CommandLineRunner {
                 .addItem( new ItemBuilder()
                         .setName("key")
                         .setWriting("Exit")
+                        .build())
+                .addContainer( new ContainerBuilder()
+                        .setName("chest")
+                        .addItem("explosive")
+                        .build())
+                .addContainer( new ContainerBuilder()
+                        .setName("lock")
+                        .setStatus("locked")
+                        .setAccept("key")
+                        .addTrigger( new TriggerBuilder()
+                                .addCondition( new ConditionHasBuilder()
+                                        .setHas(Boolean.TRUE)
+                                        .setObjectName("key")
+                                        .setOwner("lock")
+                                        .build() )
+                                .addPrint("The lock drops off and the door opens")
+                                .addAction("Update lock to unlocked")
+                                .build())
                         .build())
                 .build();
 

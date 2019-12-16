@@ -112,7 +112,7 @@ public class ZorkoGame implements ZorkoGameEventHandler {
 
                 // TODO: (1) check if command should be overwritten by triggers for the
                 // room (does this include items, containers that are in the room?)
-                boolean skipUserCommand = checkAllTriggers();
+                boolean skipUserCommand = checkAllTriggers(command);
                 log.info("SkipUserCommand={}", skipUserCommand);
 
                 // (2) execute the command
@@ -127,23 +127,40 @@ public class ZorkoGame implements ZorkoGameEventHandler {
         input.close();
     }
 
-    private boolean checkAllTriggers() {
+    private boolean checkAllTriggers(String userCommand) {
 
         boolean skipUserCommand = false;
 
         // check current room triggers
         for (Trigger t : getCurrentRoom().getTriggers()) {
-            if (t.evaluate()) {
-                // print each of the trigger prints
-                t.getPrints().stream().forEach(System.out::println);
-                // TODO: perform each of the trigger actions
-                skipUserCommand = true;
-                // remove the trigger if this was a one-time thing
-                if (t.isSingle()) {
-                    getCurrentRoom().getTriggers().remove(t);
+            // we only check the trigger if the command matches what the user
+            // entered, or if no command was specified
+            if (null != t.getCommand() && t.getCommand().equals(userCommand)) {
+                if (t.evaluate()) {
+                    log.info("Trigger eval true, firing!");
+                    // print each of the trigger prints
+                    t.getPrints().stream().forEach(System.out::println);
+                    // perform each of the trigger actions
+                    t.getActions().stream().forEach(action -> handleCommand(action));
+                    skipUserCommand = true;
+                    // remove the trigger if this was a one-time thing
+                    if (t.isSingle()) {
+                        getCurrentRoom().getTriggers().remove(t);
+                    }
                 }
             }
         }
+
+        // check container triggers in the current room
+        for (String containerName : getCurrentRoom().getContainers()) {
+            Container c = getContainer(containerName);
+            for (Trigger t : c.getTriggers()) {
+
+            }
+        }
+
+        // check creature triggers in the current room
+
         return skipUserCommand;
     }
 
