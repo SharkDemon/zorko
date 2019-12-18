@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -110,12 +111,20 @@ public class ZorkoGame implements ZorkoGameEventHandler {
         while (gameRunning) {
             try {
                 System.out.print(GAME_USER_PROMPT);
-                command = input.nextLine();
+                command = input.nextLine().trim().toLowerCase();
+
+                log.info("processing command={}", command);
+
+                // tokenize the command for processing
+                List<String> commandTokens = Collections.list(new StringTokenizer(command, " "))
+                        .stream()
+                        .map(token -> (String)token)
+                        .collect(Collectors.toList());
 
                 // TODO: (1) check if command should be overwritten by triggers for the
                 // room (does this include items, containers that are in the room?)
                 boolean skipUserCommand = checkAllTriggers(command);
-                log.info("SkipUserCommand={}", skipUserCommand);
+                log.info("skipUserCommand? [{}]", skipUserCommand);
 
                 // (2) execute the command
                 if (!skipUserCommand) {
