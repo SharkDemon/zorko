@@ -8,13 +8,13 @@ public final class Commands {
     // not only does this map hold all possible valid commands, it helps
     // to map alternate versions of a command to the preferred command
     // (i.e., "north" is preferred, but "n" is acceptable as well)
-    private final Map<String, String> commandsMap;
+    private static final Map<String, String> commandsMap;
 
     // management commands
     public static final String CMD_EXIT = "exit";
     public static final String CMD_HELP = "help";
     public static final String CMD_INVENTORY = "inventory";
-    public static final String CMD_QUIT = "q";
+    public static final String CMD_QUIT = "quit";
 
     // directional commands
     public static final String CMD_NORTH = "north";
@@ -32,14 +32,14 @@ public final class Commands {
     public static final String CMD_READ = "read";
     public static final String CMD_TAKE = "take";
 
-    private Commands() {
-        super();
-        // restrict instantiation
-
-        this.commandsMap = new HashMap<String, String>(0);
+    static {
+        commandsMap = new HashMap<String, String>(0);
 
         // management commands
+        add(CMD_EXIT);
+        add(CMD_HELP, "h");
         add(CMD_INVENTORY, "inv", "i");
+        add(CMD_QUIT, "q");
 
         // directional commands
         add(CMD_NORTH, "n");
@@ -48,17 +48,25 @@ public final class Commands {
         add(CMD_WEST, "w");
         add(CMD_UP, "u");
         add(CMD_DOWN, "d");
+
+        // action commands
+        add(CMD_ATTACK);
+        add(CMD_DROP);
+        add(CMD_LOOK);
+        add(CMD_PUT);
+        add(CMD_READ);
+        add(CMD_TAKE);
     }
 
-    private void add(String preferredCommand, String... cmds) {
+    private static void add(String preferredCommand, String... cmds) {
         commandsMap.put(preferredCommand, preferredCommand);
         for (String cmd : cmds) {
             commandsMap.put(cmd, preferredCommand);
         }
     }
 
-    public String getCommand(String command) {
-        return this.commandsMap.get(command);
+    public static String getCommand(String command) {
+        return commandsMap.get(command);
     }
 
 }
