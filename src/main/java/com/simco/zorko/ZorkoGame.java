@@ -44,6 +44,14 @@ public class ZorkoGame implements ZorkoGameEventHandler {
     // this is the message to print when the user tries to perform an invalid
     // move from a room
     private static final String MSG_INVALID_MOVE = "Can't go that way.";
+    // this is the message to print when the user tries to perform a take action
+    // but doesn't indicate what item should be taken
+    private static final String MSG_TAKE_NOT_SPECIFIED = "What is it that you wish to take?";
+    // this is the message to print when the user tries to perform a take action
+    // and the item to be taken is not present
+    private static final String MSG_TAKE_NOT_PRESENT = "There is no %s here";
+    // this is the message to print when the user successfully takes an item
+    private static final String MSG_TAKE_SUCCESS = "Item %s added to inventory";
 
     private String name = null;
     private Map<String, Room> rooms = new HashMap<String, Room>(0);
@@ -190,6 +198,12 @@ public class ZorkoGame implements ZorkoGameEventHandler {
     @Override
     public boolean handleCommand(String command) {
 
+        List<String> commandTokens = Collections.list(new StringTokenizer(command, " "))
+                .stream()
+                .map(token -> (String)token)
+                .collect(Collectors.toList());
+        boolean justCommand = (1 == commandTokens.size());
+
         // handle management commands
         if (command.equals(CMD_EXIT) || command.equals(CMD_QUIT)) {
             return false;
@@ -222,8 +236,8 @@ public class ZorkoGame implements ZorkoGameEventHandler {
         else if (command.equals(CMD_READ)) {
             System.out.println("TODO: implement command READ");
         }
-        else if (command.equals(CMD_TAKE)) {
-            System.out.println("TODO: implement command TAKE");
+        else if (command.startsWith(CMD_TAKE)) {
+            handleTake(command);
         }
 
         // (3) check if the effects of the command activate a trigger
@@ -262,6 +276,25 @@ public class ZorkoGame implements ZorkoGameEventHandler {
         System.out.println(String.format("%s\n", getCurrentRoom().getDescription()));
     }
 
+    private void handleTake(String command) {
+        if (CMD_TAKE.equals(command)) {
+            System.out.println(MSG_TAKE_NOT_SPECIFIED);
+        }
+        else {
+            String takeTarget = extractCommandTarget(CMD_TAKE, command);
+            // is there an item by that name in the current room?
+            for (String item : getCurrentRoom().getItems()) {
+                if (item.equalsIgnoreCase(takeTarget)) {
+                    System.out.println(String.format(MSG_TAKE_SUCCESS, takeTarget));
+                    Item takenItem = items.remove(takeTarget);
+                    inventoryItems.put(takenItem.getName(), takenItem);
+                    return;
+                }
+            }
+            System.out.println(String.format(MSG_TAKE_NOT_PRESENT, takeTarget));
+        }
+    }
+
     private String mapToPreferredCommand(String c) {
 
         // tokenize the command string
@@ -278,6 +311,11 @@ public class ZorkoGame implements ZorkoGameEventHandler {
         return commandTokens
                 .stream()
                 .collect(Collectors.joining(" "));
+    }
+
+    private String extractCommandTarget(String action, String command) {
+        String target = command.substring(action.length() + 1);
+        return target;
     }
 
 }
