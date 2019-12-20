@@ -55,7 +55,7 @@ public final class Commands {
         add(CMD_LOOK);
         add(CMD_PUT);
         add(CMD_READ);
-        add(CMD_TAKE);
+        add(CMD_TAKE, "get", "grab");
     }
 
     private static void add(String preferredCommand, String... cmds) {

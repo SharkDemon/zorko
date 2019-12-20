@@ -17,6 +17,7 @@ import static com.simco.zorko.model.Commands.CMD_TAKE;
 import static com.simco.zorko.model.Commands.CMD_UP;
 import static com.simco.zorko.model.Commands.CMD_WEST;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +45,17 @@ public class ZorkoGame implements ZorkoGameEventHandler {
     // this is the message to print when the user tries to perform an invalid
     // move from a room
     private static final String MSG_INVALID_MOVE = "Can't go that way.";
+
+    // this is the message to print when the user tries to perform a read action
+    // but doesn't indicate what item should be read
+    private static final String MSG_READ_NOT_SPECIFIED = "What is it that you wish to read?";
+    // this is the message to print when the user tries to perform a read action
+    // on an item that is not in inventory
+    private static final String MSG_READ_NOT_PRESENT = "There is no %s here";
+    // this is the message to print when the user tries to perform a read action
+    // on an item that doesn't have writing
+    private static final String MSG_READ_NONE = "Nothing written";
+
     // this is the message to print when the user tries to perform a take action
     // but doesn't indicate what item should be taken
     private static final String MSG_TAKE_NOT_SPECIFIED = "What is it that you wish to take?";
@@ -60,7 +72,8 @@ public class ZorkoGame implements ZorkoGameEventHandler {
     private Map<String, Creature> creatures = new HashMap<String, Creature>(0);
     private String currentRoomName = null;
 
-    private Map<String, Item> inventoryItems = new HashMap<String, Item>(0);
+    //private Map<String, Item> inventoryItems = new HashMap<String, Item>(0);
+    private List<String> inventory = new ArrayList<String>(0);
 
     public ZorkoGame() {
         super();
@@ -114,7 +127,7 @@ public class ZorkoGame implements ZorkoGameEventHandler {
 
     // basic Inventory functionality (Items)
     public Item getInventoryItem(String itemName) {
-        return this.inventoryItems.get(itemName);
+        return inventory.contains(itemName) ? items.get(itemName) : null;
     }
 
     // starts the game loop
@@ -233,8 +246,8 @@ public class ZorkoGame implements ZorkoGameEventHandler {
         else if (command.equals(CMD_PUT)) {
             System.out.println("TODO: implement command PUT");
         }
-        else if (command.equals(CMD_READ)) {
-            System.out.println("TODO: implement command READ");
+        else if (command.startsWith(CMD_READ)) {
+            handleRead(command);
         }
         else if (command.startsWith(CMD_TAKE)) {
             handleTake(command);
@@ -255,7 +268,7 @@ public class ZorkoGame implements ZorkoGameEventHandler {
 
     private void handleInventory() {
         System.out.println(String.format("Inventory: %s",
-                0 == inventoryItems.size() ? "nothing" : inventoryItems.keySet().stream().collect(Collectors.joining(", "))));
+                0 == inventory.size() ? "nothing" : inventory.stream().collect(Collectors.joining(", "))));
     }
 
     private void handleMove(String direction) {
@@ -276,6 +289,30 @@ public class ZorkoGame implements ZorkoGameEventHandler {
         System.out.println(String.format("%s\n", getCurrentRoom().getDescription()));
     }
 
+    // the way this reads right now, we're only able to read items in inventory
+    // TODO: attempt read item, if item is in: (1) inv, (2) room, (3) open container in room
+    private void handleRead(String command) {
+        if (CMD_READ.equals(command)) {
+            System.out.println(MSG_READ_NOT_SPECIFIED);
+        }
+        else {
+            String readTarget = extractCommandTarget(CMD_READ, command);
+            if (inventory.contains(readTarget)) {
+                Item item = getItem(readTarget);
+                if (null == item.getWriting() || 0 == item.getWriting().length()) {
+                    System.out.println(MSG_READ_NONE);
+                }
+                else {
+                    System.out.println(item.getWriting());
+                }
+            }
+            else {
+                // the "item to read" was not found in inventory
+                System.out.println(String.format(MSG_READ_NOT_PRESENT, readTarget));
+            }
+        }
+    }
+
     private void handleTake(String command) {
         if (CMD_TAKE.equals(command)) {
             System.out.println(MSG_TAKE_NOT_SPECIFIED);
@@ -286,11 +323,12 @@ public class ZorkoGame implements ZorkoGameEventHandler {
             for (String item : getCurrentRoom().getItems()) {
                 if (item.equalsIgnoreCase(takeTarget)) {
                     System.out.println(String.format(MSG_TAKE_SUCCESS, takeTarget));
-                    Item takenItem = items.remove(takeTarget);
-                    inventoryItems.put(takenItem.getName(), takenItem);
+                    Item takenItem = items.get(takeTarget);
+                    inventory.add(takenItem.getName());
                     return;
                 }
             }
+            // TODO: need to check for item in open containers that may be in room
             System.out.println(String.format(MSG_TAKE_NOT_PRESENT, takeTarget));
         }
     }
