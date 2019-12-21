@@ -14,10 +14,10 @@ public class GameBuilder {
     private static final String STARTING_ROOM_NAME = "Entrance";
 
     private String name;
-    private Map<String, Room> rooms = new HashMap<String, Room>(0);
-    private Map<String, Item> items = new HashMap<String, Item>(0);
-    private Map<String, Container> containers = new HashMap<String, Container>(0);
-    private Map<String, Creature> creatures = new HashMap<String, Creature>(0);
+    private Map<String, Room> rooms;
+    private Map<String, Item> items;
+    private Map<String, Container> containers;
+    private Map<String, Creature> creatures;
 
     public GameBuilder() {
         super();

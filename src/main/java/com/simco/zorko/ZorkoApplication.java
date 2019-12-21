@@ -32,10 +32,6 @@ implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        log.info("Executing: command line runner");
-        for (int i = 0; i < args.length; ++i) {
-            log.info("args[{}]: {}", i, args[i]);
-        }
 
         // TODO: load the game config from file
         ZorkoGame game = new GameBuilder()

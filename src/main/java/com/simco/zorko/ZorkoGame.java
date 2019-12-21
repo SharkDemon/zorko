@@ -71,8 +71,6 @@ public class ZorkoGame implements ZorkoGameEventHandler {
     private Map<String, Container> containers = new HashMap<String, Container>(0);
     private Map<String, Creature> creatures = new HashMap<String, Creature>(0);
     private String currentRoomName = null;
-
-    //private Map<String, Item> inventoryItems = new HashMap<String, Item>(0);
     private List<String> inventory = new ArrayList<String>(0);
 
     public ZorkoGame() {
@@ -134,7 +132,8 @@ public class ZorkoGame implements ZorkoGameEventHandler {
     public void begin() {
         Scanner input = new Scanner(System.in);
         boolean gameRunning = true;
-        String command = "";
+        String userCommand = new String();
+        String mappedCommand = new String();
 
         System.out.println(String.format("Welcome to %s.", getName()));
         printCurrentRoomDescription();
@@ -142,29 +141,28 @@ public class ZorkoGame implements ZorkoGameEventHandler {
         while (gameRunning) {
             try {
                 System.out.print(GAME_USER_PROMPT);
-                command = input.nextLine().trim().toLowerCase();
-                log.info("user input command={}", command);
+                userCommand = input.nextLine().trim().toLowerCase();
 
-                if (0 == command.length()) {
+                if (0 == userCommand.length()) {
                     System.out.println("You need to enter something!");
                     continue;
                 }
 
-                command = mapToPreferredCommand(command);
-                log.info("mapped command to={}", command);
+                mappedCommand = mapToPreferredCommand(userCommand);
+                log.info("userCommand=[{}] mappedCommand=[{}]", userCommand, mappedCommand);
 
                 // TODO: (1) check if command should be overwritten by triggers for the
                 // room (does this include items, containers that are in the room?)
-                boolean skipUserCommand = checkAllTriggers(command);
+                boolean skipUserCommand = checkAllTriggers(mappedCommand);
                 log.info("skipUserCommand?={}", skipUserCommand);
 
                 // (2) execute the command
                 if (!skipUserCommand) {
-                    gameRunning = handleCommand(command);
+                    gameRunning = handleCommand(mappedCommand);
                 }
             }
             catch (Exception e) {
-                log.info("Error handling command: {}", command);
+                log.error("Error handling command=[{}]: {}", userCommand, e.getMessage());
             }
         }
         input.close();
@@ -210,12 +208,6 @@ public class ZorkoGame implements ZorkoGameEventHandler {
     // handles user-input commands
     @Override
     public boolean handleCommand(String command) {
-
-        List<String> commandTokens = Collections.list(new StringTokenizer(command, " "))
-                .stream()
-                .map(token -> (String)token)
-                .collect(Collectors.toList());
-        boolean justCommand = (1 == commandTokens.size());
 
         // handle management commands
         if (command.equals(CMD_EXIT) || command.equals(CMD_QUIT)) {
