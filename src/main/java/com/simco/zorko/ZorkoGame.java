@@ -51,19 +51,23 @@ public class ZorkoGame implements ZorkoGameEventHandler {
     private static final String MSG_READ_NOT_SPECIFIED = "What is it that you wish to read?";
     // this is the message to print when the user tries to perform a read action
     // on an item that is not in inventory
-    private static final String MSG_READ_NOT_PRESENT = "There is no %s here";
+    private static final String MSG_READ_NOT_PRESENT = "There is no %s here.";
     // this is the message to print when the user tries to perform a read action
     // on an item that doesn't have writing
-    private static final String MSG_READ_NONE = "Nothing written";
+    private static final String MSG_READ_NONE = "Nothing written.";
 
     // this is the message to print when the user tries to perform a take action
     // but doesn't indicate what item should be taken
     private static final String MSG_TAKE_NOT_SPECIFIED = "What is it that you wish to take?";
     // this is the message to print when the user tries to perform a take action
     // and the item to be taken is not present
-    private static final String MSG_TAKE_NOT_PRESENT = "There is no %s here";
+    private static final String MSG_TAKE_NOT_PRESENT = "There is no %s here.";
     // this is the message to print when the user successfully takes an item
-    private static final String MSG_TAKE_SUCCESS = "Item %s added to inventory";
+    private static final String MSG_TAKE_SUCCESS = "Item %s added to inventory.";
+
+    private static final String MSG_DROP_NOT_SPECIFIED = "What is it that you wish to drop?";
+    private static final String MSG_DROP_NOT_CARRIED = "You don't have %s in your inventory.";
+    private static final String MSG_DROP_ITEM = "%s dropped.";
 
     private String name = null;
     private Map<String, Room> rooms = new HashMap<String, Room>(0);
@@ -229,8 +233,8 @@ public class ZorkoGame implements ZorkoGameEventHandler {
         else if (command.equals(CMD_ATTACK)) {
             System.out.println("TODO: implement command ATTACK");
         }
-        else if (command.equals(CMD_DROP)) {
-            System.out.println("TODO: implement command DROP");
+        else if (command.startsWith(CMD_DROP)) {
+            handleDrop(command);
         }
         else if (command.equals(CMD_LOOK)) {
             printCurrentRoomDescription();
@@ -276,6 +280,24 @@ public class ZorkoGame implements ZorkoGameEventHandler {
         System.out.println(MSG_INVALID_MOVE);
     }
 
+    private void handleDrop(String command) {
+        if (CMD_DROP.equals(command)) {
+            System.out.println(MSG_DROP_NOT_SPECIFIED);
+        }
+        else {
+            String dropTarget = extractCommandTarget(CMD_DROP, command);
+            if (!inventory.contains(dropTarget)) {
+                // player isn't carrying the item
+                System.out.println(String.format(MSG_DROP_NOT_CARRIED, dropTarget));
+            }
+            else {
+                inventory.remove(dropTarget);
+                getCurrentRoom().addItem(dropTarget);
+                System.out.println(String.format(MSG_DROP_ITEM, dropTarget));
+            }
+        }
+    }
+
     private void printCurrentRoomDescription() {
         //Room currentRoom = getRoom(currentRoomName);
         System.out.println(String.format("%s\n", getCurrentRoom().getDescription()));
@@ -314,9 +336,10 @@ public class ZorkoGame implements ZorkoGameEventHandler {
             // is there an item by that name in the current room?
             for (String item : getCurrentRoom().getItems()) {
                 if (item.equalsIgnoreCase(takeTarget)) {
-                    System.out.println(String.format(MSG_TAKE_SUCCESS, takeTarget));
                     Item takenItem = items.get(takeTarget);
                     inventory.add(takenItem.getName());
+                    getCurrentRoom().removeItem(takenItem.getName());
+                    System.out.println(String.format(MSG_TAKE_SUCCESS, takeTarget));
                     return;
                 }
             }

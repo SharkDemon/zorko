@@ -50,6 +50,12 @@ public class Room implements Triggerable {
     public void setItems(List<String> items) {
         this.items = items;
     }
+    public void addItem(String item) {
+        this.items.add(item);
+    }
+    public void removeItem(String item) {
+        this.items.remove(item);
+    }
 
     public List<String> getContainers() {
         return containers;
