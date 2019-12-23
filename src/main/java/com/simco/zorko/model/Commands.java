@@ -31,6 +31,7 @@ public final class Commands {
     public static final String CMD_PUT = "put";
     public static final String CMD_READ = "read";
     public static final String CMD_TAKE = "take";
+    public static final String CMD_TURN_ON = "turn on";
 
     static {
         commandsMap = new HashMap<String, String>(0);
@@ -56,6 +57,7 @@ public final class Commands {
         add(CMD_PUT);
         add(CMD_READ);
         add(CMD_TAKE, "get", "grab");
+        add(CMD_TURN_ON, "turnon", "enable");
     }
 
     private static void add(String preferredCommand, String... cmds) {
