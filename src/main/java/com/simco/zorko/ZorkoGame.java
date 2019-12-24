@@ -1,23 +1,5 @@
 package com.simco.zorko;
 
-import static com.simco.zorko.model.Commands.CMD_ATTACK;
-import static com.simco.zorko.model.Commands.CMD_DOWN;
-import static com.simco.zorko.model.Commands.CMD_DROP;
-import static com.simco.zorko.model.Commands.CMD_EAST;
-import static com.simco.zorko.model.Commands.CMD_EXIT;
-import static com.simco.zorko.model.Commands.CMD_HELP;
-import static com.simco.zorko.model.Commands.CMD_INVENTORY;
-import static com.simco.zorko.model.Commands.CMD_LOOK;
-import static com.simco.zorko.model.Commands.CMD_NORTH;
-import static com.simco.zorko.model.Commands.CMD_PUT;
-import static com.simco.zorko.model.Commands.CMD_QUIT;
-import static com.simco.zorko.model.Commands.CMD_READ;
-import static com.simco.zorko.model.Commands.CMD_SOUTH;
-import static com.simco.zorko.model.Commands.CMD_TAKE;
-import static com.simco.zorko.model.Commands.CMD_TURN_ON;
-import static com.simco.zorko.model.Commands.CMD_UP;
-import static com.simco.zorko.model.Commands.CMD_WEST;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,18 +12,8 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.simco.zorko.command.AttackCommand;
 import com.simco.zorko.command.Command;
-import com.simco.zorko.command.DropCommand;
-import com.simco.zorko.command.HelpCommand;
-import com.simco.zorko.command.InventoryCommand;
-import com.simco.zorko.command.LookCommand;
-import com.simco.zorko.command.MoveCommand;
-import com.simco.zorko.command.PutCommand;
-import com.simco.zorko.command.QuitCommand;
-import com.simco.zorko.command.ReadCommand;
-import com.simco.zorko.command.TakeCommand;
-import com.simco.zorko.command.TurnOnCommand;
+import com.simco.zorko.command.CommandFactory;
 import com.simco.zorko.model.Commands;
 import com.simco.zorko.model.Container;
 import com.simco.zorko.model.Creature;
@@ -221,59 +193,16 @@ public class ZorkoGame implements ZorkoGameEventHandler {
 
     // handles user-input commands
     @Override
-    public void handleCommand(String command) {
+    public void handleCommand(String userCommand) {
 
-        Command c = null;
-
-        // handle management commands
-        if (command.equals(CMD_EXIT) || command.equals(CMD_QUIT)) {
-            c = new QuitCommand(this, command);
-        }
-        else if (command.equals(CMD_HELP)) {
-            c = new HelpCommand(this, command);
-        }
-        else if (command.equals(CMD_INVENTORY)) {
-            c = new InventoryCommand(this, command);
-        }
-        // handle directional commands
-        else if (command.equals(CMD_NORTH) || command.equals(CMD_EAST)
-                || command.equals(CMD_SOUTH) || command.equals(CMD_WEST)
-                || command.equals(CMD_UP) || command.equals(CMD_DOWN)) {
-            c = new MoveCommand(this, command);
-        }
-        // handle action commands
-        else if (command.startsWith(CMD_ATTACK)) {
-            c = new AttackCommand(this, command);
-        }
-        else if (command.startsWith(CMD_DROP)) {
-            c = new DropCommand(this, command);
-        }
-        else if (command.equals(CMD_LOOK)) {
-            c = new LookCommand(this, command);
-        }
-        else if (command.equals(CMD_PUT)) {
-            c = new PutCommand(this, command);
-        }
-        else if (command.startsWith(CMD_READ)) {
-            c = new ReadCommand(this, command);
-        }
-        else if (command.startsWith(CMD_TAKE)) {
-            c = new TakeCommand(this, command);
-        }
-        else if (command.startsWith(CMD_TURN_ON)) {
-            c = new TurnOnCommand(this, command);
-        }
-
-        if (null != c) {
-            c.execute();
-        }
-
+        Command command = new CommandFactory(this).buildCommand(userCommand);
+        command.execute();
         // (3) check if the effects of the command activate a trigger
     }
 
-    public void handleGameCommand(String command) {
-        // TODO: implement me
-        System.out.println("TODO: handleGameCommand=[" + command + "]");
+    public void handleGameCommand(String gameCommand) {
+        Command command = new CommandFactory(this).buildGameCommand(gameCommand);
+        command.execute();
     }
 
     public Room getCurrentRoom() {

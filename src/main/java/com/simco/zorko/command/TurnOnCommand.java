@@ -33,8 +33,9 @@ public class TurnOnCommand extends BaseCommand {
                     message(String.format(MSG_TURN_ON_INVALID_ITEM, turnOnTarget));
                 }
                 else {
-                    // print the print statements, and execute the action statements
+                    // print the print statements...
                     message(item.getTurnOn().getPrint());
+                    // ...and execute the action statements
                     getGame().handleGameCommand(item.getTurnOn().getAction());
                 }
             }
