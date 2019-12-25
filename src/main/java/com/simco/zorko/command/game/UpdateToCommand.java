@@ -14,6 +14,19 @@ public class UpdateToCommand extends BaseCommand {
 
         String command = getCommand();
 
+        String expression = extractCommand("update", command);
+        String[] tokens = expression.split(" to ");
+        String itemName = tokens[0];
+        String newStatus = tokens[1];
+
+        log.debug("updating item=[{}] from oldStatus=[{}] to newStatus=[{}]"
+                , itemName
+                , getGame().getItem(itemName).getStatus()
+                , newStatus);
+
+        // update the item's status
+        getGame().getItem(itemName).setStatus(newStatus);
+
         message("TODO: implement command UPDATE TO");
     }
 

@@ -1,8 +1,13 @@
 package com.simco.zorko.command;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.simco.zorko.ZorkoGame;
 
 public abstract class BaseCommand implements Command {
+
+    protected static Logger log = LoggerFactory.getLogger(BaseCommand.class);
 
     private ZorkoGame game;
     private String command;

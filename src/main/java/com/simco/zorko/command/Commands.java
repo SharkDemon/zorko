@@ -1,4 +1,4 @@
-package com.simco.zorko.model;
+package com.simco.zorko.command;
 
 import java.util.HashMap;
 import java.util.Map;

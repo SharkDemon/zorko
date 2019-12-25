@@ -1,6 +1,6 @@
 package com.simco.zorko.command;
 
-import static com.simco.zorko.model.Commands.CMD_DROP;
+import static com.simco.zorko.command.Commands.CMD_DROP;
 
 import com.simco.zorko.ZorkoGame;
 

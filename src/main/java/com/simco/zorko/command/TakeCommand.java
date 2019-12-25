@@ -1,6 +1,6 @@
 package com.simco.zorko.command;
 
-import static com.simco.zorko.model.Commands.CMD_TAKE;
+import static com.simco.zorko.command.Commands.CMD_TAKE;
 
 import com.simco.zorko.ZorkoGame;
 import com.simco.zorko.model.Item;
@@ -23,6 +23,8 @@ public class TakeCommand extends BaseCommand {
     @Override
     public void execute() {
 
+        log.info("take execute");
+
         String command = getCommand();
 
         if (CMD_TAKE.equals(command)) {
@@ -30,6 +32,7 @@ public class TakeCommand extends BaseCommand {
         }
         else {
             String takeTarget = extractCommand(CMD_TAKE, command);
+            log.info("take target={}", takeTarget);
 
             // is there an item by that name in the current room?
             for (String item : getGame().getCurrentRoom().getItems()) {

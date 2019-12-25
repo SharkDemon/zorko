@@ -1,6 +1,6 @@
 package com.simco.zorko.command;
 
-import static com.simco.zorko.model.Commands.CMD_TURN_ON;
+import static com.simco.zorko.command.Commands.CMD_TURN_ON;
 
 import com.simco.zorko.ZorkoGame;
 import com.simco.zorko.model.Item;

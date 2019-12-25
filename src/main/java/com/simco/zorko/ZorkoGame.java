@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.simco.zorko.command.Command;
 import com.simco.zorko.command.CommandFactory;
-import com.simco.zorko.model.Commands;
+import com.simco.zorko.command.Commands;
 import com.simco.zorko.model.Container;
 import com.simco.zorko.model.Creature;
 import com.simco.zorko.model.Item;
@@ -196,6 +196,7 @@ public class ZorkoGame implements ZorkoGameEventHandler {
     public void handleCommand(String userCommand) {
 
         Command command = new CommandFactory(this).buildCommand(userCommand);
+        log.info("created command type={}", command.getClass().getName());
         command.execute();
         // (3) check if the effects of the command activate a trigger
     }
@@ -221,7 +222,9 @@ public class ZorkoGame implements ZorkoGameEventHandler {
         // preferred version of the command
         String mapTry = Commands.getCommand(commandTokens.get(0));
         // TODO: need to do 2nd try for 2-word commands?
-        commandTokens.set(0, mapTry);
+        if (null != mapTry) {
+            commandTokens.set(0, mapTry);
+        }
 
         // return the rebuilt command string
         return commandTokens
