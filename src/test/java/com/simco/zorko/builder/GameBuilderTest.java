@@ -6,29 +6,32 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import com.simco.zorko.ZorkoGame;
 import com.simco.zorko.model.Item;
 import com.simco.zorko.model.Room;
 
 @DisplayName("GameBuilder Test")
+@TestInstance(Lifecycle.PER_CLASS)
 public class GameBuilderTest {
 
-    private static final String DATA_GAME_NAME = "GameOne";
+    private final String DATA_GAME_NAME = "GameOne";
 
-    private static final String DATA_ROOM_NAME = "Kitchen";
-    private static final String DATA_ROOM_DESCRIPTION = "A simple kitchen.";
-    private static final String DATA_ROOM_TYPE = "regular";
+    private final String DATA_ROOM_NAME = "Kitchen";
+    private final String DATA_ROOM_DESCRIPTION = "A simple kitchen.";
+    private final String DATA_ROOM_TYPE = "regular";
 
-    private static final String DATA_ITEM_NAME = "Knife";
-    private static final String DATA_ITEM_STATUS = "dry";
-    private static final String DATA_ITEM_WRITING = "Caution: very very sharp";
+    private final String DATA_ITEM_NAME = "Knife";
+    private final String DATA_ITEM_STATUS = "dry";
+    private final String DATA_ITEM_WRITING = "Caution: very very sharp";
 
-    private static Room DATA_ROOM;
-    private static Item DATA_ITEM;
+    private Room DATA_ROOM;
+    private Item DATA_ITEM;
 
     @BeforeAll
-    static void beforeAll() {
+    void beforeAll() {
         DATA_ROOM = new RoomBuilder()
                 .setName(DATA_ROOM_NAME)
                 .setDescription(DATA_ROOM_DESCRIPTION)

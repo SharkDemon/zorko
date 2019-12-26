@@ -7,17 +7,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import com.simco.zorko.model.TurnOn;
 
 @DisplayName("TurnOnBuilder Test")
+@TestInstance(Lifecycle.PER_CLASS)
 public class TurnOnBuilderTest {
 
-    private static final String DATA_TURN_ON_PRINT = "you turn on the item";
-    private static final String DATA_TURN_ON_ACTION = "update status to used";
+    private final String DATA_TURN_ON_PRINT = "you turn on the item";
+    private final String DATA_TURN_ON_ACTION = "update status to used";
 
     @BeforeAll
-    static void beforeAll() {
+    void beforeAll() {
     }
 
     @Test
