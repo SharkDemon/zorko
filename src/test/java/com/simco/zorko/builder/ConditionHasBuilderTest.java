@@ -58,7 +58,7 @@ public class ConditionHasBuilderTest {
 
     @Test
     void testEvaluate() {
-
+        // TODO: impl
     }
 
 }
