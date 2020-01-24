@@ -1,3 +1,5 @@
+[![HitCount](http://hits.dwyl.io/SharkDemon/zorko.svg)](http://hits.dwyl.io/SharkDemon/zorko)
+
 # zorko
 
 Zorko is a Zork-like application implemented as a Java command line app.
